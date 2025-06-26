@@ -66,4 +66,14 @@ export default class Register {
       toast.error('Error al registrarse');
     }
   }
+
+  async submitWithGoogle() {
+    try {
+      await this._authService.logInGoogle();
+      toast.success('Usuario creado correctamente');
+      this._router.navigateByUrl('/home');
+    } catch (error) {
+      toast.error('Ha ocurrido un error');
+    }
+  }
 }

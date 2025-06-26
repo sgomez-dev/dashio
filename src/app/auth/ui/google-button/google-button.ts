@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 
 @Component({
   selector: 'app-google-button',
   imports: [],
   templateUrl: './google-button.html',
 })
-export class GoogleButton {}
+export class GoogleButton {
+  onClick = output<void>();
+}
