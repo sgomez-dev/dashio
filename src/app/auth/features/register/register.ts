@@ -60,6 +60,7 @@ export default class Register {
       if (!name || !lastName || !email || !pass || !confPass) return;
       await this._authService.register({ email, pass });
 
+      console.log(this.form.value);
       toast.success('Se ha registrado correctamente');
       this._router.navigate(['/home']);
     } catch (error) {
