@@ -6,10 +6,19 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
 } from '@angular/fire/auth';
+import { updateProfile } from 'firebase/auth';
 
 export interface UserI {
   email: string;
   pass: string;
+}
+
+export interface RegisterUserI {
+  name: string;
+  lastName: string;
+  email: string;
+  pass: string;
+  confPass: string;
 }
 
 @Injectable({
@@ -18,8 +27,18 @@ export interface UserI {
 export class AuthService {
   private _auth = inject(Auth);
 
-  register(user: UserI) {
-    return createUserWithEmailAndPassword(this._auth, user.email, user.pass);
+  async register(user: RegisterUserI) {
+    const userCredential = await createUserWithEmailAndPassword(
+      this._auth,
+      user.email,
+      user.pass
+    );
+
+    await updateProfile(userCredential.user, {
+      displayName: `${user.name}`,
+    });
+
+    return userCredential;
   }
 
   login(user: UserI) {

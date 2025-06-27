@@ -9,16 +9,27 @@ import {
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { AuthStateService } from '../../shared/data-access/auth-state.service';
 import { toast } from 'ngx-sonner';
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [RouterModule, RouterLink],
+  imports: [RouterModule, RouterLink, CommonModule],
   selector: 'app-layout',
   templateUrl: './layout.component.html',
 })
 export default class LayoutComponent {
   private _authState = inject(AuthStateService);
   private _router = inject(Router);
+
+  name: string = '';
+
+  ngOnInit() {
+    this._authState.authState$.subscribe((user) => {
+      if (user) {
+        this.name = user.displayName || 'Usuario';
+      }
+    });
+  }
 
   async logOut() {
     try {

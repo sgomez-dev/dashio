@@ -7,8 +7,12 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { GoogleButton } from '../../ui/google-button/google-button';
-import { AuthService } from '../../data-access/auth';
-import { isRequiredRegister, hasEmailError } from '../../utils/validators';
+import { AuthService, RegisterUserI } from '../../data-access/auth';
+import {
+  isRequiredRegister,
+  hasEmailError,
+  passMatchValidator,
+} from '../../utils/validators';
 import { toast } from 'ngx-sonner';
 
 interface FormRegisterI {
@@ -21,6 +25,7 @@ interface FormRegisterI {
 
 @Component({
   selector: 'app-register',
+  standalone: true,
   imports: [ReactiveFormsModule, RouterLink, GoogleButton],
   templateUrl: './register.html',
   styles: ``,
@@ -40,16 +45,21 @@ export default class Register {
     return hasEmailError(this.form);
   }
 
-  form = this._formBuilder.group<FormRegisterI>({
-    name: this._formBuilder.control('', Validators.required),
-    lastName: this._formBuilder.control('', Validators.required),
-    email: this._formBuilder.control('', [
-      Validators.required,
-      Validators.email,
-    ]),
-    pass: this._formBuilder.control('', Validators.required),
-    confPass: this._formBuilder.control('', Validators.required),
-  });
+  form = this._formBuilder.group<FormRegisterI>(
+    {
+      name: this._formBuilder.control('', Validators.required),
+      lastName: this._formBuilder.control('', Validators.required),
+      email: this._formBuilder.control('', [
+        Validators.required,
+        Validators.email,
+      ]),
+      pass: this._formBuilder.control('', Validators.required),
+      confPass: this._formBuilder.control('', Validators.required),
+    },
+    {
+      validators: passMatchValidator,
+    }
+  );
 
   async submit() {
     if (this.form.invalid) return;
@@ -58,11 +68,17 @@ export default class Register {
       const { name, lastName, email, pass, confPass } = this.form.value;
 
       if (!name || !lastName || !email || !pass || !confPass) return;
-      await this._authService.register({ email, pass });
 
-      console.log(this.form.value);
+      await this._authService.register({
+        name,
+        lastName,
+        email,
+        pass,
+        confPass,
+      });
+
       toast.success('Se ha registrado correctamente');
-      this._router.navigate(['/home']);
+      this._router.navigateByUrl('/home');
     } catch (error) {
       toast.error('Error al registrarse');
     }

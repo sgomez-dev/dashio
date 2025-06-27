@@ -2,15 +2,11 @@ import { Route, Routes } from '@angular/router';
 
 export default [
   {
-    path: '',
+    path: 'home',
     loadComponent: () => import('./list/list'),
   },
   {
-    path: 'new',
-    loadComponent: () => import('./form/form'),
-  },
-  {
-    path: 'edit/:idTask',
+    path: 'home/new',
     loadComponent: () => import('./form/form'),
   },
 ] as unknown as Routes;
